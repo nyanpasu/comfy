@@ -34,12 +34,11 @@ function generate_name ($file) {
 		}
 	}
 
-
 	do {
 		// Iterate until we reach the maximum number of retries
 		if ($tries-- == 0) throw new Exception('Gave up trying to find an unused name', 500);
 
-		$chars = 'abcdefghijklmnopqrstuvwxyz';
+		$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 		$name  = '';
 		for ($i = 0; $i < 6; $i++) {
 			$name .= $chars[mt_rand(0, 25)];
@@ -51,7 +50,7 @@ function generate_name ($file) {
 			$name .= '.' . strip_tags($ext);
 
 		// Check if a file with the same name does already exist in the database
-		$q = $db->prepare('SELECT COUNT(name) FROM pomf WHERE name = (:name)');
+		$q = $db->prepare('SELECT COUNT(name) FROM files WHERE name = (:name)');
 		$q->bindValue(':name', $name, PDO::PARAM_STR);
 		$q->execute();
 		$result = $q->fetchColumn();
@@ -69,9 +68,18 @@ function generate_name ($file) {
  */
 function upload_file ($file) {
 	global $db;
+	global $blacklisted_exts;
 
 	// Handle file errors
 	if ($file->error) throw new UploadException($file->error);
+
+	// Check if extension is blacklisted
+	$revname = strrev($file->name);
+	foreach ($blacklisted_exts as $ext) {
+		if (stripos($revname, $ext) === 0) {
+			throw new Exception('File extension is blacklisted', 500);
+		}
+	}
 
 	// Check if a file with the same hash and size (a file which is the same) does already exist in
 	// the database; if it does, delete the file just uploaded and return the proper link and data.
@@ -93,6 +101,9 @@ function upload_file ($file) {
 
 	// Generate a name for the file
 	$newname = generate_name($file);
+
+	// Append file to list of newly uploaded files
+	//file_put_contents(POMF_SCANNER_FIFO, POMF_FILES_ROOT . $newname . PHP_EOL, FILE_APPEND);
 
 	// Attempt to move it to the static directory
 	if (move_uploaded_file($file->tempfile, POMF_FILES_ROOT . $newname)) {

@@ -15,8 +15,8 @@
 body {
 	background-attachment: fixed, fixed;
 	background-color: #F7F7F7;
-	background-image: url('grill.php'), url('img/bg.png');
-	background-position: 85% 100%, top left;
+	background-image: url('grill.php'), url('img/sayagata.png');
+	background-position: 100% 100%, top left;
 	background-repeat: no-repeat, repeat;
 	color: #333;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -59,6 +59,12 @@ a:focus {
 /*	outline-offset: -2px;*/
 }
 
+nav {
+        position:absolute;
+        bottom:2.4em;
+        left:1em
+}
+
 /**
  * JUMBOTRON
  */
@@ -85,17 +91,27 @@ a:focus {
 	transition: font-size 0.5s;
 }
 .jumbotron .btn {
-	background: rgba(202, 230, 190, 0.75);
-	border: 1px solid #B7D1A0;
-	border-radius: 4px;
-	color: #468847;
-	cursor: pointer;
-	display: inline-block;
-	font-size: 24px;
-	padding: 28px 48px;
-	text-shadow: 0 1px rgba(255, 255, 255, 0.5);
-	transition: background-color 0.25s, width 0.5s, height 0.5s;
+	background:rgba(202,230,190,.75);
+	background-image: url(img/up.png);
+	background-size: cover;
+	border:1px solid #B7D1A0;
+	color:#468847;
+	transition:background-color .25s,width .5s,height .5s;
+
+	cursor:pointer;
+
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	vertical-align: middle;
+
+	height: 200px;
+	width: 200px;
 }
+
 .jumbotron .btn:hover,
 .jumbotron .btn:active,
 .jumbotron .btn:focus,
@@ -326,6 +342,11 @@ section.ded {
 	opacity: 0.5;
 }
 
+p.removed {
+	text-align: center;
+	font-style: italic;
+}
+
 /**
  * MEDIA QUERIES
  */
@@ -386,5 +407,9 @@ section.ded {
 		background-color: rgba(255, 255, 255, 0.75);
 		border: #FFFFFF;
 		padding: 10px 0;
+
+                position: absolute;
+                bottom: 2.4em;
+                left: 1em;
 	}
 }

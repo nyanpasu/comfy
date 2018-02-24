@@ -8,28 +8,29 @@ module.exports = function (grunt) {
 					allowErrors: false,
 					autoescape: true
 				},
-				banners: grunt.file.readJSON('pages/banners.json'),
-				max_upload_size: 50,
+				//banners: grunt.file.readJSON('pages/banners.json'),
+				max_upload_size: 512,
 				dest: "dist/",
 				cwd: "pages/",
 				generateSitemap: false,
 				generateRobotstxt: false,
 				src: [
 					'index.swig',
-					'faq.swig',
-					'tools.swig'
+					'about.swig',
+					'tools.swig',
+					'removed.swig'
 				],
-				siteUrl: 'http://pomf.se/',
+				siteUrl: 'http://comfy.moe/',
 				production: false,
 			}
 		},
 		htmlmin: {
 			dist: {
 				options: {
-					removeComments: true,
-					collapseWhitespace: true,
-					conservativeCollapse: true,
-					removeEmptyAttributes: true
+					removeComments: false,
+					collapseWhitespace: false,
+					conservativeCollapse: false,
+					removeEmptyAttributes: false
 				},
 				files: [{
 					expand: true,
@@ -40,9 +41,6 @@ module.exports = function (grunt) {
 			}
 		},
 		uglify: {
-			options: {
-				banner: '/*! <%= pkg.name %> (<%= pkg.repository.url %>) @ <%= grunt.template.today("yyyy-mm-dd") %> */\n\n'
-			},
 			dist: {
 				files: {
 					'dist/pomf.min.js': [
@@ -55,9 +53,6 @@ module.exports = function (grunt) {
 			}
 		},
 		cssmin: {
-			options: {
-				banner: '/*! <%= pkg.name %> (<%= pkg.repository.url %>) @ <%= grunt.template.today("yyyy-mm-dd") %> */\n\n'
-			},
 			dist: {
 				files: {
 					'dist/pomf.min.css': [
@@ -72,16 +67,16 @@ module.exports = function (grunt) {
 				create: ['dist/img']
 			}
 		},
-		imagemin: {
-			dist: {
-				files: [{
-					expand: true,
-					cwd: 'img/',
-					src: '**/*.{png,jpg,gif}',
-					dest: 'dist/img/'
-				}]
-			}
-		},
+		//imagemin: {
+		//	dist: {
+		//		files: [{
+		//			expand: true,
+		//			cwd: 'img/',
+		//			src: '**/*.{png,jpg,gif}',
+		//			dest: 'dist/img/'
+		//		}]
+		//	}
+		//},
 		copy: {
 			dist: {
 				files: [{
@@ -89,6 +84,11 @@ module.exports = function (grunt) {
 					cwd: 'static/',
 					src: '**',
 					dest: 'dist/'
+				},{
+					expand: true,
+					cwd: 'img/',
+					src: '**/*.{png,jpg,gif}',
+					dest: 'dist/img/'
 				}]
 			}
 		}
@@ -102,5 +102,6 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-imagemin');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 
-	grunt.registerTask('default', ['mkdir', 'swig', 'htmlmin', 'cssmin', 'uglify', 'imagemin', 'copy']);
+	//grunt.registerTask('default', ['mkdir', 'swig', 'htmlmin', 'cssmin', 'uglify', 'imagemin', 'copy']);
+	grunt.registerTask('default', ['mkdir', 'swig', 'htmlmin', 'cssmin', 'uglify', 'copy']);
 };

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+while true; do	
+	while read f; do
+		clamscan --quiet --move ~pomf/malware/ $f
+		if [[ $? -eq 1 ]]; then
+			echo "[$(date)]	$f quarantined."
+		else
+			echo "[$(date)]	$f scanned."
+		fi
+	done < /var/run/scanner_fifo
+done > /var/log/pomf/scanner.log

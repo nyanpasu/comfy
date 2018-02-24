@@ -35,18 +35,19 @@ $(function () {
 		} while (node = node.parentNode)
 	})
 
-	var MAX_SIZE = (function (node) {
-		var max = node.attr('data-max-size') || '10MiB'
-		var num = parseInt(/([0-9,]+).*/.exec(max)[1].replace(',', ''))
-		var unit = /(?:([KMGTPEZY])(i)?B|([BKMGTPEZY]))/.exec(max) || ["B","",""]
-
-		var oneUnit = Math.pow(
-			(unit[2] === "i" ? 1024 : 1000),
-			'BKMGTPEZY'.indexOf(unit[1])
-		)
-
-		return num * oneUnit
-	})(uploadInput)
+//	var MAX_SIZE = (function (node) {
+//		var max = node.attr('data-max-size') || '512MiB'
+//		var num = parseInt(/([0-9,]+).*/.exec(max)[1].replace(',', ''))
+//		var unit = /(?:([KMGTPEZY])(i)?B|([BKMGTPEZY]))/.exec(max) || ["B","",""]
+//
+//		var oneUnit = Math.pow(
+//			(unit[2] === "i" ? 1024 : 1000),
+//			'BKMGTPEZY'.indexOf(unit[1])
+//		)
+//
+//		return num * oneUnit
+//	})(uploadInput)
+var MAX_SIZE = 1024 * 1024 * 512;
 
 	var createRow = function (filename, size, extra) {
 		var rowItem = $('<li class=file>')
@@ -83,7 +84,7 @@ $(function () {
 		if (files.size > MAX_SIZE) {
 			uploadFiles.addClass('error')
 
-			$('.file-name', totalRow).text('onii-chan y-your upload is t-too big&hellip;')
+			$('.file-name', totalRow).html($('<div/>').html('Onii-chan, y-your upload is t-too big&hellip;').text());
 			return
 		}
 
@@ -118,7 +119,11 @@ $(function () {
 					var res = JSON.parse(res)
 					if (!res.success) {
 						uploadFiles.addClass('error')
-						$('.file-name', totalRow).text('Something went wrong; try again later.')
+						if (res.description) {
+							totalName.text(res.description)
+						} else {
+							totalName.text('Something went wrong; try again later.')
+						}
 						break
 					}
 					eachRow(res.files, function (row, file, files) {
@@ -136,11 +141,17 @@ $(function () {
 				case 413:
 					uploadFiles.addClass('error completed')
 					// Terrible work-around, but necessary since otherwise the '&hellip;' entity is left decoded
-					totalName.html($('<div/>').html('onii-chan, y-your upload is t-too big&hellip;').text());
+					totalName.html($('<div/>').html('Onii-chan, y-your upload is t-too big&hellip;').text());
 					break
 				default:
+					var res = JSON.parse(res)
 					uploadFiles.addClass('error completed')
 					totalName.text('Something went wrong; try again later.')
+					if (res.description) {
+						totalName.text(res.description)
+					} else {
+						totalName.text('Something went wrong; try again later.')
+					}
 			}
 		})
 		up.upload()
